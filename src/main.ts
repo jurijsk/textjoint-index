@@ -1,6 +1,6 @@
 
 class Index {
-	alhabet = new Alphabet();
+	alphabet = new Alphabet();
 
 	getPositions = function getPositions(this: Index, query: string): number[]{
 		let positions = new Array<number>();
@@ -8,14 +8,14 @@ class Index {
 			return positions;
 		}
 		let depth = 0;
-		let startGlyph = this.alhabet.glyphs[query[depth]];
+		let startGlyph = this.alphabet.glyphs[query[depth]];
 		depth++;
 		//let nextChar = ;
 		if(query[depth] === undefined) {
 			//end of query
 			return positions; //return currentGlyph.positions to array instead.
 		}
-		let currentGlyph = this.alhabet.glyphs[query[depth]];
+		let currentGlyph = this.alphabet.glyphs[query[depth]];
 		if(!currentGlyph){
 			return positions;
 			//i-char is never followed by next char in the query string
@@ -24,12 +24,13 @@ class Index {
 
 		let glyphs = new Array<Glyph>();
 		for (let i = 0; i < query.length; i++) {
-			const glyph = this.alhabet.glyphs[query[i]];
+			const glyph = this.alphabet.glyphs[query[i]];
 			if(!glyph){
 				return positions;
 			}
 			glyphs.push(glyph);
 		}
+		
 		let pos = startGlyph.firstPosition;
 		while(pos != -1){
 			currentGlyph = glyphs[depth];
@@ -76,7 +77,7 @@ function main(){
 	//let text = "abc ab";
 	console.timeEnd("get_content");
 
-	const alhabet = index.alhabet;
+	const alhabet = index.alphabet;
 	let lastSeenIndex: {[key: string]: number} = {};
 	console.time("index");
 	let previous = new Glyph(text[0], 0);
@@ -106,8 +107,6 @@ main();
 
 
 (function test(){
-
-
 	//console.log("includes 'a'", index.includes("a"));
 	//console.log("includes 'abc'", index.includes("abc"));
 	//console.log("includes 'az'", index.includes("az"));
