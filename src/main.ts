@@ -118,5 +118,13 @@ main();
 	console.log("includes 'abstract'", index.getPositions("abstract"));
 	console.timeEnd("abstract");
 
+	console.time("using window.find: abstract");
+	let count = 0;
+	while(window.find("abstract", false, true, false, true, true, false)) {
+		count++;
+	}
+	console.timeEnd("using window.find: abstract");
+	console.log("abstract count: ", count);
+
 })()
 
