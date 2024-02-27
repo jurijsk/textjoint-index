@@ -1,6 +1,6 @@
 
 class Index {
-	alphabet = new Alphabet();
+	tokens: { [key: string]: Token } = Object.create(null);
 
 	getPositions = function getPositions(this: Index, query: string): number[]{
 		let positions = new Array<number>();
@@ -8,42 +8,42 @@ class Index {
 			return positions;
 		}
 		let depth = 0;
-		let startGlyph = this.alphabet.glyphs[query[depth]];
+		let start = this.tokens[query[depth]];
 		depth++;
 		//let nextChar = ;
 		if(query[depth] === undefined) {
 			//end of query
 			return positions; //return currentGlyph.positions to array instead.
 		}
-		let currentGlyph = this.alphabet.glyphs[query[depth]];
-		if(!currentGlyph){
+		let current = this.tokens[query[depth]];
+		if(!current){
 			return positions;
 			//i-char is never followed by next char in the query string
 			//this is very unlukely case, especially with text that not only language
 		}
 
-		let glyphs = new Array<Glyph>();
+		let queryTokens = new Array<Token>();
 		for (let i = 0; i < query.length; i++) {
-			const glyph = this.alphabet.glyphs[query[i]];
+			const glyph = this.tokens[query[i]];
 			if(!glyph){
 				return positions;
 			}
-			glyphs.push(glyph);
+			queryTokens.push(glyph);
 		}
 		
-		let pos = startGlyph.firstPosition;
+		let pos = start.firstPosition;
 		while(pos != -1){
-			currentGlyph = glyphs[depth];
-			if(currentGlyph.positions.get(pos + depth)){
+			current = queryTokens[depth];
+			if(current.positions.get(pos + depth)){
 				depth++;
 				if(depth == query.length){
 					//end of query - found a match
 					positions.push(pos);
-					pos = startGlyph.positions.get(pos) || -1;
+					pos = start.positions.get(pos) || -1;
 					depth = 1;
 				}
 			} else {
-				pos = startGlyph.positions.get(pos) || -1;
+				pos = start.positions.get(pos) || -1;
 				depth = 1;
 			}
 		}
@@ -51,62 +51,58 @@ class Index {
 	}
 }
 
-class Alphabet {
-	glyphs: { [key: string]: Glyph } = {};
 
-	getPositions(query: string){
-		return this.glyphs[query[0]];
-	}
-}
 
-class Glyph {
-	constructor(public glyph: string, public firstPosition: number) {
-	}
-	//count = 0;
+class Token {
+	constructor(public token: string, public firstPosition: number) {}
 	positions = new Map<number, number>();
-	//followers: { [key: string]: Glyph } = {};
 }
 
-const index = new Index();
 
-function main(){
+
+function buildIndex(){
 	console.log("up and running");
+	const index = new Index();
 
 	console.time("get_content");
-	let text = document.body.textContent || "";
+	let content = document.body.textContent || "";
 	//let text = "abc ab";
 	console.timeEnd("get_content");
 
-	const alhabet = index.alphabet;
+	const tokens = index.tokens;
 	let lastSeenIndex: {[key: string]: number} = {};
 	console.time("index");
-	let previous = new Glyph(text[0], 0);
-	//previous.count++;
+	let tokenSrt = content[0];
+	let previous = new Token(tokenSrt, 0);
 	previous.positions.set(0, 0);
-	lastSeenIndex[text[0]] = 0; 
-	alhabet.glyphs[text[0]] = previous;
+	lastSeenIndex[content[0]] = 0; 
+	tokens[content[0]] = previous;
 
-	for (let i = 1; i < text.length; i++) {
-		const char = text[i].toLowerCase();
-		let glyph = alhabet.glyphs[char] || new Glyph(char, i);
+	for (let i = 1; i < content.length; i++) {
+		tokenSrt = content[i].toLowerCase();
+		let token = tokens[tokenSrt] || new Token(tokenSrt, i);
 		//glyph.count++;
-		lastSeenIndex[char] !== undefined && (glyph.positions.set(lastSeenIndex[char], i));
-		lastSeenIndex[char] = i;
-		glyph.positions.set(i, -1);
-		alhabet.glyphs[char] = glyph;
+		lastSeenIndex[tokenSrt] !== undefined && (token.positions.set(lastSeenIndex[tokenSrt], i));
+		lastSeenIndex[tokenSrt] = i;
+		token.positions.set(i, -1);
+		tokens[tokenSrt] = token;
 		//previous.followers[char] = glyph;
-		previous = glyph;
+		previous = token;
 	}
 	console.timeEnd("index");
 
-	console.log(alhabet);
-	//document["aplha"] = alhabet;
+	return index;
 }
 
-main();
+
+function test(){
+	
 
 
-(function test(){
+	let index = buildIndex();
+
+	window.contentIndex = index;
+
 	//console.log("includes 'a'", index.includes("a"));
 	//console.log("includes 'abc'", index.includes("abc"));
 	//console.log("includes 'az'", index.includes("az"));
@@ -125,6 +121,7 @@ main();
 	}
 	console.timeEnd("using window.find: abstract");
 	console.log("abstract count: ", count);
+}
 
-})()
+window["test"] = test;
 
