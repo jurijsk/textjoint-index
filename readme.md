@@ -1,13 +1,17 @@
+**NOTE:**
+
+This shit is useless AF. It takes 40MB to index big book and takes 2 to 5 times to seach for a word in the index then to serch with `string.indexOf`
+
 Little algo the find occurances of text on the page (in-page search).
 
-For 1798k charapters long page takes *517ms* to build the index, and *~8ms* to find all hits.
+For 1798k characters long page takes *517ms* to build the index, and *~8ms* to find all hits.
 
-Is it fast? Idk, but for sure it is memomy hungry (~40 MB)
+Is it fast? Idk, but for sure it is memomy hungry (~40 MB) *(hint: it's not)*
 
 
 built using vite and vue
 
-run in broswer and open the console.
+run in broswer and open the console and type: `window.text()`
 
 # How it works (if I remember correctly)
 

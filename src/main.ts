@@ -95,21 +95,42 @@ function test(){
 	console.time("build_index");
 	const index = new Index().build(content);
 	console.timeEnd("build_index");
-
-
 	window.contentIndex = index;
+	
 
-	//console.log("includes 'a'", index.includes("a"));
-	//console.log("includes 'abc'", index.includes("abc"));
-	//console.log("includes 'az'", index.includes("az"));
-	//console.log("includes 'jurijs'", index.includes("jurijs"));
-	console.time("playground");
-	console.log("includes 'playground'", index.getPositions("playground"));
-	console.timeEnd("playground");
-	console.time("abstract");
-	console.log("includes 'abstract'", index.getPositions("abstract"));
-	console.timeEnd("abstract");
 
+	console.time("index.playground");
+	console.log("index 'playground'", index.getPositions("playground"));
+	console.timeEnd("index.playground");
+
+
+	
+	let i = 0;
+	let results = new Array<number>();
+	console.time("search.playground");
+	while((i = content.indexOf("playground", i + 1)) !== -1){
+		results.push(i);
+	}
+	console.log("search 'playground'", results);
+	console.timeEnd("search.playground");
+
+
+	console.time("index.abstract");
+	console.log("index. 'abstract'", index.getPositions("abstract"));
+	console.timeEnd("index.abstract");
+
+	i = 0;
+	results = new Array<number>();
+	console.time("search.abstract");
+	while((i = content.indexOf("abstract", i + 1)) !== -1){
+		results.push(i);
+	}
+	console.log("search 'abstract'", results);
+	console.timeEnd("search.abstract");
+
+
+
+	/* this take way too long
 	console.time("using window.find: abstract");
 	let count = 0;
 	while(window.find("abstract", false, true, false, true, true, false)) {
@@ -117,6 +138,7 @@ function test(){
 	}
 	console.timeEnd("using window.find: abstract");
 	console.log("abstract count: ", count);
+	*/
 }
 
 window["test"] = test;
