@@ -14,12 +14,10 @@ class Index {
 		for (let i = 1; i < content.length; i++) {
 			tokenSrt = content[i].toLowerCase();
 			let token = tokens[tokenSrt] || new Token(tokenSrt, i);
-			//glyph.count++;
 			lastSeenIndex[tokenSrt] !== undefined && (token.positions.set(lastSeenIndex[tokenSrt], i));
 			lastSeenIndex[tokenSrt] = i;
 			token.positions.set(i, -1);
 			tokens[tokenSrt] = token;
-			//previous.followers[char] = glyph;
 			previous = token;
 		}
 		return this;
@@ -97,7 +95,7 @@ function test(){
 	console.timeEnd("build_index");
 	window.contentIndex = index;
 	
-
+	content = content.toLowerCase();
 
 	console.time("index.playground");
 	console.log("index 'playground'", index.getPositions("playground"));
